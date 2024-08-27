@@ -89,11 +89,14 @@ dev-device-ip:
 		exit 1; \
 	fi
 
-dev-device-sync: dev-device-ip
+dev-device-show-ip: dev-device-ip
+	@echo $(DEV_DEVICE_IP)
+
+dev-device-sync: dev-device-ip clean
 	@echo 'Sync via scp...'
 	@scp -r -i ${SSH_PRIVATE_KEY} ${SRC_DIR}/xmrsigner xmrsigner@${DEV_DEVICE_IP}:/opt/xmrsigner/
 
-dev-device-rsync: dev-device-ip
+dev-device-rsync: dev-device-ip clean
 	@echo 'Sync via rsync...'
 	@rsync -az --info=progress2 -e "ssh -i ${SSH_PRIVATE_KEY}" ${SRC_DIR}/xmrsigner xmrsigner@${DEV_DEVICE_IP}:/opt/xmrsigner/
 
