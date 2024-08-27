@@ -280,15 +280,17 @@ class DecodeQR:
             # Probably this isn't meant to be string data; check if it's valid byte data
             # below.
             pass
+        # TODO: 2024-08-26, check and write tests
+        print(f'byte({len(s)})<{type(s)}>? {s}')
         # Is it byte data?
         # 32 bytes for 24-word CompactSeedQR; 16 bytes for 12-word CompactSeedQR, 22 for polyseed
-        if len(s) in (32, 16, 22):
+        if len(s) in (33, 17, 22):
             try:
-                bitstream = ""
+                bitstream = ''
                 for b in s:
                     bitstream += bin(b).lstrip('0b').zfill(8)
                 return QRType.SEED__COMPACTSEEDQR
             except Exception as e:
                 # Couldn't extract byte data; assume it's not a byte format
-                pass
+                print(f'exception: {e}')
         return QRType.INVALID

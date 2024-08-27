@@ -67,7 +67,7 @@ class SeedQrDecoder(BaseSingleFrameQrDecoder):
         elif qr_type == QRType.SEED__MNEMONIC:
             print('SeedQrDecoder.add(): SEED__MNEMONIC')
             try:
-                seed_phrase_list = self.seed_phrase = segment.strip().split(" ")
+                seed_phrase_list = self.seed_phrase = segment.strip().split(' ')
 
                 if len(seed_phrase_list) in (12, 13, 24, 25):  # Monero seed phrase
                     self.seed_phrase = MoneroSeed(MoneroSeed(' '.join(seed_phrase_list)).hex).phrase.split()

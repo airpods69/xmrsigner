@@ -1,4 +1,5 @@
 from typing import List
+from math import ceil
 
 
 class CompactSeed:
@@ -14,7 +15,7 @@ class CompactSeed:
 
     @staticmethod
     def length(cs: bytes) -> int:
-        return (len(cs) * 8) // 11
+        return ceil((len(cs) * 8) / 11)
 
     @staticmethod
     def idx2bytes(idx_list: List[int]) -> bytes:
