@@ -1,4 +1,5 @@
 # Todo
+- [ ] Check again compact seed, write test code to catch the issue
 ## Backend
 - [.] [monero-python](https://github.com/DiosDelRayo/monero-python/Todo.md): monero seed encryption/decryption * not part of the CCS, delayed how it seems a rabbit hole (>48h work)
 ## Seeds
