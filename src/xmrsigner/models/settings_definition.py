@@ -52,23 +52,31 @@ class SettingsConstants:
     CAMERA_ROTATION__180 = 180
     CAMERA_ROTATION__270 = 270
     ALL_CAMERA_ROTATIONS = [
-        (CAMERA_ROTATION__0, "0°"),
-        (CAMERA_ROTATION__90, "90°"),
-        (CAMERA_ROTATION__180, "180°"),
-        (CAMERA_ROTATION__270, "270°"),
+        (CAMERA_ROTATION__0, '0°'),
+        (CAMERA_ROTATION__90, '90°'),
+        (CAMERA_ROTATION__180, '180°'),
+        (CAMERA_ROTATION__270, '270°'),
     ]
 
-    PERSISTENT_SETTINGS__SD_INSERTED__HELP_TEXT = "Store Settings on SD card"
-    PERSISTENT_SETTINGS__SD_REMOVED__HELP_TEXT = "Insert SD card to enable"
+    PERSISTENT_SETTINGS__SD_INSERTED__HELP_TEXT = 'Store Settings on SD card'
+    PERSISTENT_SETTINGS__SD_REMOVED__HELP_TEXT = 'Insert SD card to enable'
 
     # QR code constants
-    DENSITY__LOW = "L"
-    DENSITY__MEDIUM = "M"
-    DENSITY__HIGH = "H"
+    DENSITY__LOW = 'L'
+    DENSITY__MEDIUM = 'M'
+    DENSITY__HIGH = 'H'
     ALL_DENSITIES = [
-        (DENSITY__LOW, "Low"),
-        (DENSITY__MEDIUM, "Medium"),
-        (DENSITY__HIGH, "High"),
+        (DENSITY__LOW, 'Low'),
+        (DENSITY__MEDIUM, 'Medium'),
+        (DENSITY__HIGH, 'High'),
+    ]
+
+    # View Only Wallet QR Code Format
+    VIEW_ONLY_WALLET_FORMAT_URI = 'U'
+    VIEW_ONLY_WALLET_FORMAT_JSON = 'J'
+    ALL_VIEW_ONLY_WALLET_FORMATS = [
+        (VIEW_ONLY_WALLET_FORMAT_URI, 'WALLET URI'),
+        (VIEW_ONLY_WALLET_FORMAT_JSON, 'JSON')
     ]
 
     # Seed-related constants
@@ -190,6 +198,7 @@ class SettingsConstants:
     SETTING__XMR_DENOMINATION = "denomination"
 
     SETTING__LOW_SECURITY = 'low_security'
+    SETTING__VIEW_WALLET_QR_FORMAT = 'wallet_qr_format'
     SETTING__NETWORKS = "networks"
     SETTING__QR_DENSITY = "qr_density"
     SETTING__SIG_TYPES = "sig_types"
@@ -346,16 +355,16 @@ class SettingsEntry:
 
 class SettingsDefinition:
     """
-        Master list of all settings, their possible options, their defaults, on-device
-        display strings, and enriched SettingsQR UI options.
+    Master list of all settings, their possible options, their defaults, on-device
+    display strings, and enriched SettingsQR UI options.
 
-        Used to auto-build the Settings UI menuing with no repetitive boilerplate code.
+    Used to auto-build the Settings UI menuing with no repetitive boilerplate code.
 
-        Defines the on-disk persistent storage structure and can read that format back
-        and validate the values.
+    Defines the on-disk persistent storage structure and can read that format back
+    and validate the values.
 
-        Used to generate a master json file that documents all these params which can
-        then be read in by the SettingsQR UI to auto-generate the necessary html inputs.
+    Used to generate a master json file that documents all these params which can
+    then be read in by the SettingsQR UI to auto-generate the necessary html inputs.
     """
     # Increment if there are any breaking changes; write migrations to bridge from
     # incompatible prior versions.
@@ -407,6 +416,15 @@ class SettingsDefinition:
                       default_value=SettingsConstants.XMR_DENOMINATION__THRESHOLD),
 
         # Advanced options
+        SettingsEntry(category=SettingsConstants.CATEGORY__FEATURES,
+                      attr_name=SettingsConstants.SETTING__VIEW_WALLET_QR_FORMAT,
+                      display_name="Wallet QR Format",
+                      abbreviated_name="wqrfmt",
+                      type=SettingsConstants.TYPE__MULTISELECT,
+                      visibility=SettingsConstants.VISIBILITY__ADVANCED,
+                      selection_options=SettingsConstants.ALL_VIEW_ONLY_WALLET_FORMATS,
+                      default_value=SettingsConstants.ALL_VIEW_ONLY_WALLET_FORMATS[:1]),
+
         SettingsEntry(category=SettingsConstants.CATEGORY__FEATURES,
                       attr_name=SettingsConstants.SETTING__NETWORKS,
                       display_name="Monero networks",
