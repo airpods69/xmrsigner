@@ -434,8 +434,10 @@ class SeedOptionsView(View):
         button_data = []
         button_data.append(self.SCAN)
         button_data.append(self.EXPORT_KEY_IMAGES)
+        if len(self.settings.get_value(SettingsConstants.SETTING__VIEW_WALLET_QR_FORMAT)) > 1:
+            self.VIEW_ONLY_WALLET.with_right_icon(IconConstants.CHEVRON_RIGHT)
         button_data.append(self.VIEW_ONLY_WALLET)
-        button_data.append(self.VIEW_ONLY_WALLET_JSON)
+        # button_data.append(self.VIEW_ONLY_WALLET_JSON)  # TODO: 2024-08-26, finish implementation
         if self.controller.get_wallet_seed(self.seed.network) != self.seed:
             button_data.append(self.LOAD_WALLET)
         else:
@@ -560,7 +562,7 @@ class SeedWordsView(View):
         # Slice the mnemonic to our current 4-word section
         words_per_page = 4
         mnemonic = self.seed.mnemonic_display_list
-        words = mnemonic[self.page_index*words_per_page:(self.page_index + 1)*words_per_page]
+        words = mnemonic[self.page_index * words_per_page:(self.page_index + 1) * words_per_page]
         button_data = []
         if self.page_index < self.num_pages - 1 or self.seed_num is None:
             button_data.append(NEXT)
@@ -720,17 +722,18 @@ class SeedTranscribeSeedQRFormatView(View):
 
     def run(self):
         seed: Seed = self.controller.get_seed(self.seed_num)
-        seed_type: SeedType = seed.type
-        if len(seed.mnemonic_list) < 25:
-            STANDARD = ButtonData('Standard: 25x25')
-            COMPACT = ButtonData('Compact: 21x21')
-            num_modules_standard = 25
-            num_modules_compact = 21
-        else:
-            STANDARD = ButtonData('Standard: 29x29')
-            COMPACT = ButtonData('Compact: 25x25')
-            num_modules_standard = 29
-            num_modules_compact = 25
+        num_modules_standard = {
+                SeedType.Monero: 29,
+                SeedType.MyMonero: 25,
+                SeedType.Polyseed: 25
+            }[seed.type]
+        num_modules_compact = {
+                SeedType.Monero: 25,
+                SeedType.MyMonero: 21,
+                SeedType.Polyseed: 25
+            }[seed.type]
+        STANDARD = ButtonData(f'Standard: {num_modules_standard}x{num_modules_standard}')
+        COMPACT = ButtonData(f'Compact: {num_modules_compact}x{num_modules_compact}')
         if self.settings.get_value(SettingsConstants.SETTING__COMPACT_SEEDQR) != SettingsConstants.OPTION__ENABLED:
             # Only configured for standard SeedQR
             return Destination(
@@ -745,7 +748,7 @@ class SeedTranscribeSeedQRFormatView(View):
         button_data = [STANDARD, COMPACT]
         selected_menu_num = seed_screens.SeedTranscribeSeedQRFormatScreen(
             title='SeedQR Format',
-            seed_type=seed_type,
+            seed_type=seed.type,
             button_data=button_data,
         ).display()
         if selected_menu_num == RET_CODE__BACK_BUTTON:
@@ -832,11 +835,11 @@ class SeedTranscribeSeedQRZoomedInView(View):
         self.seed = self.controller.get_seed(seed_num)
     
     def run(self):
-        if len(self.seed.mnemonic_list) == 25:
-            num_modules = 25 if self.seedqr_format == QRType.SEED__COMPACTSEEDQR else 29  # TODO: expire 2024-07-15, from there come this numbers, is this not some data comming from QR code constraints? Would it no be wise to get the number from there instead of this??? Test if smaller are viable
-        else:
-            num_modules = 21 if self.seedqr_format == QRType.SEED__COMPACTSEEDQR else 25
-        e = SeedQrEncoder(self.seed.mnemonic_list, self.seed.wordlist) if self.seedqr_format == QRType.SEED__SEEDQR else CompactSeedQrEncoder(self.seed.mnemonic_list)
+        if self.seedqr_format == QRType.SEED__SEEDQR:
+            num_modules = 29 if (len(self.mnemonic_list) * 4) > 77 else 25  # Version 1 can fit 77 numeric digits into 25x25 and up to 127 numeric digits into 29x29
+        elif self.seedqr_format == QRType.SEED__COMPACTSEEDQR:
+            num_modules = 25 if ceil(len(self.mnemonic_list) * 11 / 8) > 32 else 21  # Version 1 can fit 17 bytes into 21x21 and up to 32 bytes into 25x25
+        e = SeedQrEncoder(self.seed.mnemonic_list, self.seed.wordlist) if self.seedqr_format == QRType.SEED__SEEDQR else CompactSeedQrEncoder(self.seed.mnemonic_list, self.seed.wordlist)
         seed_screens.SeedTranscribeSeedQRZoomedInScreen(
             qr_data=e.next_part(),
             num_modules=num_modules,
