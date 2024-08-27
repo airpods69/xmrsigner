@@ -7,7 +7,7 @@ from xmrsigner.gui.screens import seed_screens, WarningScreen, ButtonListScreen,
 from xmrsigner.helpers.wallet import MoneroWalletRPCManager, WALLET_PORT
 from xmrsigner.helpers.network import Network
 from xmrsigner.helpers.monero import WalletRpcWrapper
-from xmrsigner.models.settings_definition import SettingsConstants
+from xmrsigner.models.settings_definition import SettingsConstants, SettingsDefinition
 from xmrsigner.gui.button_data import ButtonData
 from xmrsigner.gui.components import IconConstants, FontAwesomeIconConstants, GUIConstants
 from xmrsigner.gui.screens.wallet_screens import WalletOptionsScreen
@@ -30,11 +30,28 @@ class WalletViewKeyQRView(View):
         self.height: int = self.controller.get_seed(seed_num).height
 
     def run(self):
-        self.run_screen(
-            QRDisplayScreen,
-            qr_encoder=ViewOnlyWalletQrEncoder(self.wallet, self.height)
-        )
-        return Destination(BackStackView)
+        wallet_qr_format: Optional[str] = None
+        if len(self.settings.get_value(SettingsConstants.SETTING__VIEW_WALLET_QR_FORMAT)) > 1:
+            ret = self.run_screen(
+                    ButtonListScreen,
+                    title=SettingsDefinition.get_settings_entry(SettingsConstants.SETTING__VIEW_WALLET_QR_FORMAT).display_name,
+                    button_data=[ButtonData(format[1]) for format in self.settings.get_multiselect_value_display_names(SettingsConstants.SETTING__VIEW_WALLET_QR_FORMAT)]
+            )
+            wallet_qr_format = self.settings.get_value(SettingsConstants.SETTING__VIEW_WALLET_QR_FORMAT)[ret]
+        else:
+            wallet_qr_format = self.settings.get_value(SettingsConstants.SETTING__VIEW_WALLET_QR_FORMAT)[0]
+        if wallet_qr_format == SettingsDefinition.VIEW_ONLY_WALLET_FORMAT_URI:
+            self.run_screen(
+                QRDisplayScreen,
+                qr_encoder=ViewOnlyWalletQrEncoder(self.wallet, self.height)
+            )
+            return Destination(BackStackView)
+        if wallet_qr_format == SettingsDefinition.VIEW_ONLY_WALLET_FORMAT_URI:
+            self.run_screen(
+                QRDisplayScreen,
+                qr_encoder=ViewOnlyWalletJsonQrEncoder(self.wallet, self.height)
+            )
+            return Destination(BackStackView)
 
 
 class WalletViewKeyJsonQRView(WalletViewKeyQRView):
