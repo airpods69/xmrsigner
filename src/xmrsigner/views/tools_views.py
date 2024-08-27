@@ -39,7 +39,8 @@ from xmrsigner.views.seed_views import (
 from xmrsigner.views.view import (
     View,
     Destination,
-    BackStackView
+    BackStackView,
+    DireWarningScreen
 )
 
 
@@ -214,7 +215,7 @@ class ToolsDiceSeedTypeView(View):
 class ToolsDiceEntropyMnemonicLengthView(View):
     def run(self):
         if self.settings.get_value(SettingsConstants.SETTING__LOW_SECURITY) != SettingsConstants.OPTION__ENABLED:
-            return Destination(ToolsDiceEntropyEntryView, view_args=dict(total_rolls=100))
+            return Destination(ToolsDiceEntropyEntryView, view_args=dict(total_rolls=100), clear_history=True)
         THIRTEEN = ButtonData('13 words (50 rolls)')
         TWENTY_FIVE = ButtonData('25 words (100 rolls)')
         button_data = [THIRTEEN, TWENTY_FIVE]
@@ -227,9 +228,9 @@ class ToolsDiceEntropyMnemonicLengthView(View):
         if selected_menu_num == RET_CODE__BACK_BUTTON:
             return Destination(BackStackView)
         if button_data[selected_menu_num] == THIRTEEN:
-            return Destination(ToolsDiceEntropyEntryView, view_args=dict(total_rolls=50))
+            return Destination(ToolsDiceEntropyEntryView, view_args=dict(total_rolls=50), clear_history=True)
         if button_data[selected_menu_num] == TWENTY_FIVE:
-            return Destination(ToolsDiceEntropyEntryView, view_args=dict(total_rolls=100))
+            return Destination(ToolsDiceEntropyEntryView, view_args=dict(total_rolls=100), clear_history=True)
 
 
 class ToolsDiceEntropyEntryView(View):
