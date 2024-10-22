@@ -9,7 +9,8 @@
 
 
 ### Printing tips
-- XmrSigner_Bottom.3mf is ready for multicolor printing but can also be printed in a single color.
+- XmrSigner_Bottom.3mf and XmrSigner_Top.3mf are ready for multicolor printing but can also be printed in a single color.
+- .3mf files are very similar to .stl files and can be opened by any slicer software.
 - Files are preoriented for optimal printing, no supports required.
 - The included controls can be printed from PLA, but TPU is recommended.
 - Recommended shore hardness is 95A, but any TPU will work.
