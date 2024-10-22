@@ -14,3 +14,7 @@
 - The included controls can be printed from PLA, but TPU is recommended.
 - Recommended shore hardness is 95A, but any TPU will work.
 
+
+### Assembly
+
+Assembling this is straightforward. Insert the Pi Zero with attached camera (and inserted microsd card) at an angle, align the micro sd port to the micro sd slot, lightly press the Pi Zero in, then put the Waveshare LCD hat on top, press down on its sides (don't press directly on the LCD) and it will click into place. Now position joystick and buttons and close the case.
