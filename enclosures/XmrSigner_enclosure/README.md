@@ -1,6 +1,6 @@
 ## The XmrSigner Enclosure
 
-<img src="XmrSigner_Thumb.jpg" width="800" height="600">
+<img src="XmrSigner_Thumb.jpeg" width="800" height="600">
 
 - Snap fit 3D-printed enclosure, no screws or spacers needed.
 - This enclosure requires use of the so called "zerocam", which allows for a more compact form factor.
