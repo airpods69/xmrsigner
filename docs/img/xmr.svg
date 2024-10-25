@@ -7,7 +7,7 @@
    width="5008.1187"
    height="5008.6562"
    viewBox="0 0 5008.1187 5008.6562"
-   sodipodi:docname="monero-symbol-emoji.ai"
+   sodipodi:docname="monero-symbol-emoji-inkscape.svg"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -60,7 +60,7 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
      inkscape:zoom="0.2535"
-     inkscape:cx="2500.9862"
+     inkscape:cx="2090.7298"
      inkscape:cy="2502.9586"
      inkscape:window-width="3840"
      inkscape:window-height="2124"
@@ -115,7 +115,10 @@
     <g
        id="g28"
        transform="translate(1969.3037,1735.8262)"
-       clip-path="url(#clipPath330)">
+       clip-path="url(#clipPath330)"
+       inkscape:export-filename="xmr.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <path
          d="m 0,0 -532.671,532.703 v -994.141 h -203.637 -203.618 l -384.29,-0.07 c 329.634,-540.801 925.347,-902.564 1604.91,-902.564 679.54,0 1275.308,361.846 1604.969,902.647 l -384.445,-0.013 h -364.246 -43.028 V 532.703 L 561.246,0 280.639,-280.607 0.022,0 Z"
          style="fill:#4d4d4d;fill-opacity:1;fill-rule:nonzero;stroke:none"
