@@ -84,4 +84,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) f
 
 ---
 
-Built with ![XMR](docs/img/xmr.png) and ❤️ by the Monero community, for the Monero community
+Built with <img src="docs/img/xmr.svg" height="16" width="16" /> and ❤️ by the Monero community, for the Monero community
