@@ -119,7 +119,7 @@ direction to go from here. Input welcome!
 ## Community Designs
 ![Go Brrr X Design](enclosures/XmrSigner_enclosure/XmrSigner_Thumb.jpeg)
 
-[The files to print yourself the enclosure](enclosures/XmrSigner_enclosure) from [@Go Brrr](https://github.com/gobrrrme)[website](https://gobrrr.me)[X](https://twitter.com/Printer_Gobrrr)
+[The files to print yourself the enclosure](enclosures/XmrSigner_enclosure) from [@Go Brrr](https://github.com/gobrrrme) [website](https://gobrrr.me) [X](https://twitter.com/Printer_Gobrrr)
 [In Go Brrr's repository](https://github.com/gobrrrme/xmrsigner/tree/master/enclosures/XmrSigner_enclosure)
 
 ### Designes done for Seedsigner but will work just the same for XmrSigner
