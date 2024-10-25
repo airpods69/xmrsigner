@@ -83,5 +83,5 @@ This project stands on the shoulders of giants:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
 
 <p style="text-align: center;">
-Built with <img src="/XmrSigner/xmrsigner/raw/master/docs/img/xmr.svg" style="height: 14px;bottom: -1px;position: relative;"> and ❤️ by the Monero community, for the Monero community
+Built with <a href="https://ccs.getmonero.org"><img src="docs/img/xmr.svg" style="height: 14px;bottom: -1px;position: relative;"></a> and ❤️ by the Monero community, for the Monero community
 </p>
