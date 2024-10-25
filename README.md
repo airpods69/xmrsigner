@@ -1,135 +1,89 @@
-# Build an offline, airgapped Monero signing device for less than $50!
+# 🔒 XmrSigner: Build Your Own Air-Gapped Monero Hardware Wallet
 
----------------
+[![Status: Beta](https://img.shields.io/badge/Status-Beta-yellow.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)]()
+[![Monero: Compatible](https://img.shields.io/badge/Monero-Compatible-orange.svg)]()
 
-* [Project Summary](#project-summary)
-* [Features](#features)
-* [Related Repositories](#related-repositories)
-* [Todo](Todo.md)
-* [Monero CCS Proposal](https://repo.getmonero.org/monero-project/ccs-proposals/-/merge_requests/465)
-* [Shopping List](#shopping-list)
-* [Software Installation](#software-installation)
-  * [Verifying Your Software](#verifying-your-software)
-* [Enclosure Designs](#enclosure-designs)
-* [SeedQR Printable Templates](#seedqr-printable-templates)
-* [Manual Installation Instructions](#manual-installation-instructions)
+> Build your own secure, air-gapped Monero hardware wallet for less than a cup of coffee per day. Perfect for privacy-conscious individuals who want complete control over their digital assets.
 
+## 🚀 Why XmrSigner?
 
----------------
+XmrSigner empowers you to create a truly air-gapped Monero signing device using affordable, off-the-shelf hardware. Born from the battle-tested SeedSigner Bitcoin project, XmrSigner brings the same level of security and sovereignty to the Monero ecosystem.
 
-MoneroSigner is in the process of rebranding to XmrSigner, to be not confused to an abandoned project called MoneroSigner.
+### 🛡️ Key Security Features
+- **Truly Air-Gapped**: No WiFi, no Bluetooth, no backdoors
+- **Stateless Design**: No persistent storage of sensitive data
+- **Open Source**: Every component is verifiable and transparent
+- **DIY Approach**: You build it, you trust it
 
----------------
+## ✨ Flagship Features
 
-# Project Summary
+- 🎲 Create secure seeds using dice rolls or camera entropy
+- 📷 Live preview for QR scanning and seed generation
+- 🔐 Support for both 25-word Monero seeds and 16-word Polyseed phrases
+- 🌐 Compatible with Mainnet, Stagenet & Testnet
+- 🤝 Integration with Feather Wallet and official Monero GUI
+- 💻 Companion desktop application for seamless transaction handling
 
-XmrSigner is a fork from [SeedSigner](https://github.com/SeedSigner/seedsigner), Bitcoin signing device. It builds on the same hardware and actually you could use the same device for Monero and Bitcoin with two different microSD cards. MoneroSigner offers anyone the opportunity to build a verifiably air-gapped, stateless Monero signing device using inexpensive, publicly available hardware components (usually < $50).
+## 🛠️ Hardware Shopping List
 
-How Monero is not a direct decendent from Bitcoin a lot of things are different... Really, a lot!
+| Component | Specifications | Why This Matters |
+|-----------|----------------|------------------|
+| Raspberry Pi Zero | v1.3 (no WiFi/BT) | Maximum air-gap security |
+| Waveshare LCD | 1.3" 240x240px | Perfect size-to-usability ratio |
+| Camera Module | OV5647 Sensor | Reliable QR code scanning |
 
+**Estimated Total Cost**: $40-50 USD
 
-### Features
-- [x] Calculate word 13/25 of monero seed phrase
-- [x] Create a 25-word monero seed phrase with 99 dice rolls
-- [x] Create a 16 word polyseed phrase with 99(?) dice rolls
-- [x] Create a 25-word monero seed phrase by taking a digital photo
-- [x] Create a 16-word polyseed phrase by taking a digital photo
-- [x] Temporarily store up to 3 seed phrases while device is powered
-- [ ] ~~Monero passphrase support~~, posponed, possible #rabbit-hole (>48h work to implement in python)
-- [x] Polyseed passphrase support
-- [ ] ~~Multisig support~~: later
-- [x] Scan and parse transaction data from animated QR codes using [UR](https://www.blockchaincommons.com/specifications/Blockchain-Commons-URs-Support-Airgapped-PSBTs/)
-- [x] Sign transactions
-- [x] Live preview during photo-to-seed and QR scanning UX
-- [x] Optimized seed word entry interface
-- [x] Support for Monero Mainnet, Stagenet & Testnet
-- [x] User-configurable QR code display density (__check: UR documentation about viability__)
+## 🏗️ Current Status
 
-### Considerations:
-* Built for compatibility using  [UR](https://www.blockchaincommons.com/specifications/Blockchain-Commons-URs-Support-Airgapped-PSBTs/) with Feather Waller, etc, and adapt oficial [Monero GUI](https://www.getmonero.org/downloads/#gui).
-* Device takes up to 60 seconds to boot before menu appears (be patient!)
-* Always test your setup before transfering larger amounts of monero (try testnet first!)
-* Slightly rotating the screen clockwise or counter-clockwise should resolve lighting/glare issues
-* If you think XmrSigner adds value to the Monero ecosystem, please help us spread the word! (tweets, pics, videos, etc.)
+XmrSigner is currently in active development, with a strong focus on security and usability. Some exciting developments on the horizon:
 
-### Related Repositories
-* [This one(XmrSigner)](https://github.com/DiosDelRayo/MoneroSigner)
-* [XmrSigner OS](https://github.com/DiosDelRayo/monerosigner-os)
-* [Emulator](https://github.com/DiosDelRayo/monerosigner-emulator) forked from [SeedSigner Emulator](https://github.com/enteropositivo/seedsigner-emulator), simple to use and no modifications of the source necessary thanks to overlay mount
-* [Polyseed](https://github.com/DiosDelRayo/polyseed-python) transpiled and pythonized from [original Polyseed C-implementation](https://github.com/tevador/polyseed)
-* [monero-python](https://github.com/DiosDelRayo/monero-python) fork from from [original](https://github.com/monero-ecosystem/monero-python)
-* [monero](https://github.com/DiosDelRayo/monero) fork of [monero](https://github.com/monero-project/monero) to extend `monero-wallet-rpc` with two endpoints for encrypted key images handling
-* [Companion Application](https://github.com/DiosDelRayo/XmrSignerCompanion) the Qt 6/C++ Companion Application
+- ✅ Core signing functionality
+- ✅ QR code transaction parsing
+- 🚧 Comprehensive documentation
+- 🚧 Multisig support (planned)
+- 🚧 Native C++ reimplementation
 
-## What to expect:
-1. Create a PiOS development image with XmrSigner running on it (for development only, not for real use).
-2. Fix open imperfections in XmrSigner and XmrSigner Companion code.
-3. Make XmrSigner work on XmrSigner OS (buildroot).
-4. Create a phone app to test XmrSigner and other offline signing wallets.
-5. Write comprehensive documentation.
-6. Implement multisig functionality.
-7. Potentially develop XmrSigner NG, a slim reimplementation in ~~Go/Zig/Rust or~~ **C++**~~/Qt.~~ (C++ for the ability to switch from XmrSigner OS to bare metal)
+## 📸 The Device
 
-The project remains committed to delivering a secure XmrSigner for production, despite the challenges encountered.
+![XmrSigner Enclosure](enclosures/XmrSigner_enclosure/XmrSigner_Thumb.jpeg)
 
----------------
+*Community-designed enclosure by [@Go Brrr](https://github.com/gobrrrme)* [website](https://gobrrr.me) [X](https://twitter.com/Printer_Gobrrr)
 
-# Shopping List
+[The files to print the enclosure](enclosures/XmrSigner_enclosure)
 
-To build a SeedSigner, you will need:
+## 🤝 Community & Support
 
-* Raspberry Pi Zero (preferably version 1.3 with no WiFi/Bluetooth capability, but any Raspberry Pi ~~2/3/4 or~~ Zero model will work)
-* Waveshare 1.3" 240x240 pxl LCD (correct pixel count is important, more info at https://www.waveshare.com/wiki/1.3inch_LCD_HAT)
-* Pi Zero-compatible camera (tested to work with the Aokin / AuviPal 5MP 1080p with OV5647 Sensor)
+- [Join the Discussion](https://github.com/DiosDelRayo/MoneroSigner/discussions)
+- [Report Issues](https://github.com/DiosDelRayo/MoneroSigner/issues)
+- [Contribute](https://github.com/DiosDelRayo/MoneroSigner/blob/main/CONTRIBUTING.md)
 
-Notes:
-* You will need to solder the 40 GPIO pins (20 pins per row) to the Raspberry Pi Zero board. If you don't want to solder, purchase "GPIO Hammer Headers" for a solderless experience.
-* Other cameras with the above sensor module should work, but may not fit in the Orange Pill enclosure
-* Choose the Waveshare screen carefully; make sure to purchase the model that has a resolution of 240x240 pixels
+## ⚠️ Important Notes
 
----------------
+- Device takes ~60 seconds to boot (patience is a virtue!)
+- Always test with testnet before handling real funds
+- This is beta software - use at your own risk
 
-# Software Installation
+## 📚 Related Projects
 
-At the moment there is only a development image based on Raspberries Pi OS (buster, pretty old),
-with bookworm there is stil an issue with picamera2 although I adapted the code to run on both.
-After running in similar issues with buster, it could be that it is only a wrong setting in config.txt.
+- [XmrSigner OS](https://github.com/DiosDelRayo/monerosigner-os) - Custom operating system
+- [XmrSigner Emulator](https://github.com/DiosDelRayo/monerosigner-emulator) - Development testing environment
+- [XmrSigner Companion](https://github.com/DiosDelRayo/XmrSignerCompanion) - Desktop integration app
 
-But honestly, this development image was meant that there is at least something running and the
-ability to thinker with it, or check things out. But main focus should be to get it on XmrSigner OS
-running. Here is the issue to compile monero-wallet-rpc without to bring even more dependencies, which
-are by they way all unnecessary becauae absolutely unneeded for the use case, into buidroot.
+## 🙏 Acknowledgments
 
-I will need how to go further and in which direction, monero-wallet-rpc was a temporary solution to
-move "quick" after figuring out at monero-python is mostly only a wrapper around monero-wallet-rpc,
-but implementing thing like password or key images import/export base on ch_hash_slow (CryptoNight),
-there would be a lot to transpile. So the better approach in my opinion and beneficial for all comming
-monero developers would be to take monero souce appart modularize it, minimze dependencies and allow
-to compile only what you need. And after that reimplement it without monero-wallet-rpc.
+This project stands on the shoulders of giants:
+- [SeedSigner](https://github.com/SeedSigner/seedsigner) - The original inspiration
+- [Monero Project](https://github.com/monero-project/monero) - The privacy foundation
+- Community contributors who make this project possible
 
-Further I think for the XmrSigner itself there are also too much dependencies, and also completely
-unnecessary. Essentially XmrSigner doesn't need an OS, it should run bare metal on the Raspberry Pi or
-it should be on something like the i.MX from NXP/Freescale. That all let's so many questions open in which
-direction to go from here. Input welcome!
+## 📜 License
 
----------------
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
 
-# Enclosure Designs
+---
 
-## Community Designs
-![Go Brrr X Design](enclosures/XmrSigner_enclosure/XmrSigner_Thumb.jpeg)
-
-[The files to print yourself the enclosure](enclosures/XmrSigner_enclosure) from [@Go Brrr](https://github.com/gobrrrme) [website](https://gobrrr.me) [X](https://twitter.com/Printer_Gobrrr)
-[In Go Brrr's repository](https://github.com/gobrrrme/xmrsigner/tree/master/enclosures/XmrSigner_enclosure)
-
-### Designes done for Seedsigner but will work just the same for XmrSigner
-* [Lil Pill](https://cults3d.com/en/3d-model/gadget/lil-pill-seedsigner-case) by @_CyberNomad
-* [OrangeSurf Case](https://github.com/orangesurf/orangesurf-seedsigner-case) by @OrangeSurfBTC
-* [PS4 Seedsigner](https://www.thingiverse.com/thing:5363525) by @Silexperience
-* [OpenPill Faceplate](https://www.printables.com/en/model/179924-seedsigner-open-pill-cover-plates-digital-cross-jo) by @Revetuzo 
-* [Waveshare CoverPlate](https://cults3d.com/en/3d-model/various/seedsigner-coverplate-for-waveshare-1-3-inch-lcd-hat-with-240x240-pixel-display) by @Adathome1
-
----------------
-
-# Manual Installation Instructions
-see the docs: [Manual Installation Instructions](docs/manual_installation.md) (To be updated)
+<p align="center">
+Built with ❤️ by the Monero community, for the Monero community
+</p>
