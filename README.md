@@ -1,8 +1,8 @@
 # 🔒 XmrSigner: Build Your Own Air-Gapped Monero Hardware Wallet
 
-[![Status: Beta](https://img.shields.io/badge/Status-Beta-yellow.svg)]()
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)]()
-[![Monero: Compatible](https://img.shields.io/badge/Monero-Compatible-orange.svg)]()
+[![Status: Beta](https://img.shields.io/badge/Status-Beta-yellow.svg)](#%EF%B8%8F-current-status)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
+[![Monero: Compatible](https://img.shields.io/badge/Monero-Compatible-orange.svg)](https://getmonero.org)
 
 > Build your own secure, air-gapped Monero hardware wallet for less than a cup of coffee per day. Perfect for privacy-conscious individuals who want complete control over their digital assets.
 
@@ -49,15 +49,15 @@ XmrSigner is currently in active development, with a strong focus on security an
 
 ![XmrSigner Enclosure](enclosures/XmrSigner_enclosure/XmrSigner_Thumb.jpeg)
 
-*Community-designed enclosure by [@Go Brrr](https://github.com/gobrrrme)* [website](https://gobrrr.me) [X](https://twitter.com/Printer_Gobrrr)
+*Community-designed enclosure by [@Go Brrr](https://github.com/gobrrrme) ([website](https://gobrrr.me) [X](https://twitter.com/Printer_Gobrrr))*
 
 [The files to print the enclosure](enclosures/XmrSigner_enclosure)
 
 ## 🤝 Community & Support
 
-- [Join the Discussion](https://github.com/DiosDelRayo/MoneroSigner/discussions)
-- [Report Issues](https://github.com/DiosDelRayo/MoneroSigner/issues)
-- [Contribute](https://github.com/DiosDelRayo/MoneroSigner/blob/main/CONTRIBUTING.md)
+- [Join the Discussion](https://github.com/XmrSigner/xmrsigner/discussions)
+- [Report Issues](https://github.com/XmrSigner/xmrsigner/issues)
+- [Contribute](CONTRIBUTING.md)
 
 ## ⚠️ Important Notes
 
@@ -85,5 +85,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) f
 ---
 
 <p align="center">
-Built with ❤️ by the Monero community, for the Monero community
+Built with ![XMR](docs/img/xmr.svg) and ❤️ by the Monero community, for the Monero community
 </p>
