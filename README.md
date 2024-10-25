@@ -7,8 +7,6 @@
 * [Related Repositories](#related-repositories)
 * [Todo](Todo.md)
 * [Monero CCS Proposal](https://repo.getmonero.org/monero-project/ccs-proposals/-/merge_requests/465)
-* [Milestones](#milestones)
-* [Timeline](#timeline)
 * [Shopping List](#shopping-list)
 * [Software Installation](#software-installation)
   * [Verifying Your Software](#verifying-your-software)
@@ -19,13 +17,13 @@
 
 ---------------
 
- MoneroSigner is in the process of rebranding to XmrSigner, to be not confused to an abandoned project called MoneroSigner.
+MoneroSigner is in the process of rebranding to XmrSigner, to be not confused to an abandoned project called MoneroSigner.
 
 ---------------
 
 # Project Summary
 
- XmrSigner is a fork from [SeedSigner](https://github.com/SeedSigner/seedsigner), Bitcoin signing device. It builds on the same hardware and actually you could use the same device for Monero and Bitcoin with two different microSD cards. MoneroSigner offers anyone the opportunity to build a verifiably air-gapped, stateless Monero signing device using inexpensive, publicly available hardware components (usually < $50).
+XmrSigner is a fork from [SeedSigner](https://github.com/SeedSigner/seedsigner), Bitcoin signing device. It builds on the same hardware and actually you could use the same device for Monero and Bitcoin with two different microSD cards. MoneroSigner offers anyone the opportunity to build a verifiably air-gapped, stateless Monero signing device using inexpensive, publicly available hardware components (usually < $50).
 
 How Monero is not a direct decendent from Bitcoin a lot of things are different... Really, a lot!
 
@@ -50,7 +48,7 @@ How Monero is not a direct decendent from Bitcoin a lot of things are different.
 ### Considerations:
 * Built for compatibility using  [UR](https://www.blockchaincommons.com/specifications/Blockchain-Commons-URs-Support-Airgapped-PSBTs/) with Feather Waller, etc, and adapt oficial [Monero GUI](https://www.getmonero.org/downloads/#gui).
 * Device takes up to 60 seconds to boot before menu appears (be patient!)
-* Always test your setup before transfering larger amounts of bitcoin (try testnet first!)
+* Always test your setup before transfering larger amounts of monero (try testnet first!)
 * Slightly rotating the screen clockwise or counter-clockwise should resolve lighting/glare issues
 * If you think XmrSigner adds value to the Monero ecosystem, please help us spread the word! (tweets, pics, videos, etc.)
 
@@ -63,85 +61,16 @@ How Monero is not a direct decendent from Bitcoin a lot of things are different.
 * [monero](https://github.com/DiosDelRayo/monero) fork of [monero](https://github.com/monero-project/monero) to extend `monero-wallet-rpc` with two endpoints for encrypted key images handling
 * [Companion Application](https://github.com/DiosDelRayo/XmrSignerCompanion) the Qt 6/C++ Companion Application
 
----------------
-# Milestones
-1. Monero Signer basics on emulator (10 days from now)
-    - [x] Emulator easy start
-    - [x] Polyseed python implementation
-    - [x] Monero seed generation with camera for entropy
-    - [x] Monero seed generation on dice rolls
-    - [x] Monero seed generation by picking words
-    - [x] Polyseed generation with camera for entropy
-    - [x] Polyseed generation on dice rolls
-    - [ ] ~~Polyseed generation by picking words~~ can't be done, because you can't choose words, because seeds are generate with pbkdf sha256, so only one way, we could over an alternative, or generate need seeds out of the choosen one.
-    - [x] Wallet export seed phrase
-    - [-] ~~Wallet export seed hex~~ not to be implemented, bad decision
-    - [x] Wallet export QR code
-    - [x] Build script to generate executable for linux
-    - [x] Build script to generate executable win32
-    - [-] ~~Build script to generate executable macOS~~ Not supported: use Docker
-
-
-2. XmrSigner working with companion Application (25 days from now)
-    - [x] Monero signer companion Application finished
-        - [x] Show View Only Wallet QR code
-        - [x] Export key images
-            - [ ] ~~conversion from monero encrypted key images file to RPC Json~~ => Not viable, used modified monero-wallet-rpc
-            - [x] Rest
-        - [x] import outputs
-        - [x] sign transaction
-        - [x] export signed transaction
-        - [x] UR's implemented
-        - [P] sending progress
-        - [P] config QR
-    - [x] All missing XmrSigner functionality
-        - [x] Show View Only Wallet QR code
-        - [x] import outputs
-        - [x] Export key images
-        - [x] import unsigned transaction
-        - [x] show data from unsigned transaction
-        - [x] ask for confirmation to proceed
-        - [x] sign transaction
-        - [x] export signed transaction
-        - [x] UR's implemented
-    - [X] first xmrsigner image build
-    - [x] xmrsigner image build chain
-
-
-3. Cleanup and production ready (45 days from now)
-    - [x] Tools
-    - [x] Scripts
-    - [x] Documentation final version
-    - [x] Final cleanup XmrSigner
-    - [x] Final cleanup companion Application
-
-
-4. Monero-GUI integration (60 days from now from, until PR)
-    - [ ] Fork
-    - [ ] Modify
-    - [ ] PR
-
-P: posponed
-W: WIP
-?: Not decided yet
-
-XmrSigner development faced numerous technical challenges, including issues with monero-python, complexities in the Monero codebase, and difficulties building monero-wallet-rpc for ARMv6 devices.
-
-## Rabbit holes
-Pretty much rabbit holes everywhere, somebody please remember me the next time to at least 3x the estimated time to unforeseen clusterfuck.
-
 ## What to expect:
 1. Create a PiOS development image with XmrSigner running on it (for development only, not for real use).
 2. Fix open imperfections in XmrSigner and XmrSigner Companion code.
-3. Continue with milestone 3 targets, bringing XmrSigner to beta state.
-4. Finish milestone 4, including Monero GUI integration and PR.
-5. Make XmrSigner work on XmrSigner OS (buildroot).
-6. Create a phone app to test XmrSigner and other offline signing wallets.
-7. Write comprehensive documentation.
-8. Implement multisig functionality.
-9. Potentially develop XmrSigner NG, a slim reimplementation in Go/Zig/Rust or C++/Qt.
+3. Make XmrSigner work on XmrSigner OS (buildroot).
+4. Create a phone app to test XmrSigner and other offline signing wallets.
+5. Write comprehensive documentation.
+6. Implement multisig functionality.
+7. Potentially develop XmrSigner NG, a slim reimplementation in ~~Go/Zig/Rust or~~ **C++**~~/Qt.~~ (C++ for the ability to switch from XmrSigner OS to bare metal)
 
-The project remains committed to delivering a functional and secure XmrSigner, despite the challenges encountered.
+The project remains committed to delivering a secure XmrSigner for production, despite the challenges encountered.
 
 ---------------
 
@@ -149,7 +78,7 @@ The project remains committed to delivering a functional and secure XmrSigner, d
 
 To build a SeedSigner, you will need:
 
-* Raspberry Pi Zero (preferably version 1.3 with no WiFi/Bluetooth capability, but any Raspberry Pi 2/3/4 or Zero model will work)
+* Raspberry Pi Zero (preferably version 1.3 with no WiFi/Bluetooth capability, but any Raspberry Pi ~~2/3/4 or~~ Zero model will work)
 * Waveshare 1.3" 240x240 pxl LCD (correct pixel count is important, more info at https://www.waveshare.com/wiki/1.3inch_LCD_HAT)
 * Pi Zero-compatible camera (tested to work with the Aokin / AuviPal 5MP 1080p with OV5647 Sensor)
 
@@ -187,10 +116,12 @@ direction to go from here. Input welcome!
 
 # Enclosure Designs
 
-Comming soon
-
 ## Community Designs
+![Go Brrr X Design](enclosures/XmrSigner_enclosure/XmrSigner_Thumb.jpeg)
+[The files to print yourself the enclosure](enclosures/XmrSigner_enclosure) from [@Go Brrr](https://github.com/gobrrrme)[website](https://gobrrr.me)[X](https://twitter.com/Printer_Gobrrr)
+[In Go Brrr's repository](https://github.com/gobrrrme/xmrsigner/tree/master/enclosures/XmrSigner_enclosure)
 
+## Designes done for Seedsigner but will work just the same for XmrSigner
 * [Lil Pill](https://cults3d.com/en/3d-model/gadget/lil-pill-seedsigner-case) by @_CyberNomad
 * [OrangeSurf Case](https://github.com/orangesurf/orangesurf-seedsigner-case) by @OrangeSurfBTC
 * [PS4 Seedsigner](https://www.thingiverse.com/thing:5363525) by @Silexperience
