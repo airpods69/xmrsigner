@@ -118,10 +118,11 @@ direction to go from here. Input welcome!
 
 ## Community Designs
 ![Go Brrr X Design](enclosures/XmrSigner_enclosure/XmrSigner_Thumb.jpeg)
+
 [The files to print yourself the enclosure](enclosures/XmrSigner_enclosure) from [@Go Brrr](https://github.com/gobrrrme)[website](https://gobrrr.me)[X](https://twitter.com/Printer_Gobrrr)
 [In Go Brrr's repository](https://github.com/gobrrrme/xmrsigner/tree/master/enclosures/XmrSigner_enclosure)
 
-## Designes done for Seedsigner but will work just the same for XmrSigner
+### Designes done for Seedsigner but will work just the same for XmrSigner
 * [Lil Pill](https://cults3d.com/en/3d-model/gadget/lil-pill-seedsigner-case) by @_CyberNomad
 * [OrangeSurf Case](https://github.com/orangesurf/orangesurf-seedsigner-case) by @OrangeSurfBTC
 * [PS4 Seedsigner](https://www.thingiverse.com/thing:5363525) by @Silexperience
