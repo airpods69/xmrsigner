@@ -161,48 +161,63 @@ EOSUCCESS
 flash() {
     local image_path="$1"
 
-    # List available removable devices
-    devices=$(lsblk -o RM,SIZE,TYPE,NAME,MODEL | grep -v -E '(lvm|part|loop)' | grep -v -E '\s0B\s' | grep -E '^\s?1')
-
-    # Parse the device list and store in array
-    device_list=()
-    while read -r line; do
-	rm=$(echo $line | awk '{print $1}')
-	size=$(echo $line | awk '{print $2}')
-	type=$(echo $line | awk '{print $3}')
-	name=$(echo $line | awk '{print $4}')
-	model=$(echo $line | awk '{print $5, $6, $7, $8}')
-	device_list+=("$name $model ($size)")
-    done <<< "$devices"
-
-    echo -e "\nAvailable devices:"
-    for i in "${!device_list[@]}"; do
-	echo -e "$((i+1)). ${device_list[$i]}"
-	if [ "$i" -gt 9 ]; then
-		break
+    while true
+    do
+	echo -n "Scan for devices..."
+	# List available removable devices
+	devices=$(lsblk -o RM,SIZE,TYPE,NAME,MODEL | grep -v -E '(lvm|part|loop)' | grep -v -E '\s0B\s' | grep -E '^\s?1' || true)
+	if [[ -z ${devices} ]]; then
+	    echo -e "failed\nNo removable devices found."
+	    read -n1 -rp "Would you like to (r)escan, or (q)uit? " choice
+	    echo
+	    [[ $choice == [qQ] ]] && echo -e "\nOperation cancelled." && return 0
+	    [[ $choice == [rR] ]] && echo "" && continue
+	    echo -n "\nInvalid choice. Operation cancelled." && return 1
 	fi
+	echo "done"
+
+	# Parse the device list and store in array
+	device_list=()
+	while read -r line; do
+	    rm=$(echo $line | awk '{print $1}')
+	    size=$(echo $line | awk '{print $2}')
+	    type=$(echo $line | awk '{print $3}')
+	    name=$(echo $line | awk '{print $4}')
+	    model=$(echo $line | awk '{print $5, $6, $7, $8}')
+	    device_list+=("$name $model ($size)")
+	done <<< "$devices"
+
+	echo -e "\nAvailable devices:"
+	for i in "${!device_list[@]}"; do
+	    echo -e "$((i+1)). ${device_list[$i]}"
+	    if [ "$i" -gt 9 ]; then
+		    break
+	    fi
+	done
+	read -n 1 -r -p "Select a device to flash the image (enter the number), (r)escan or (q)uit: " selection
+	[[ $selection == [qQ] ]] && echo -e "\nOperation cancelled." && return 0
+	[[ $selection == [rR] ]] && echo "" && continue
+
+	if [[ "$selection" -lt 1 || "$selection" -gt "${#device_list[@]}" ]]; then
+	    echo -e "\nInvalid selection"
+	    return
+	fi
+	selected_device=$(echo "${device_list[$((selection-1))]}" | awk '{print $1}')
+	device_path="/dev/$selected_device"
+	echo -e "\nSelected device: $device_path"
+
+	# Ask for confirmation
+	read -n 3 -r -p "Are you sure you want to destroy all data on $device_path? (yes/no): " confirmation
+
+	if [[ "$confirmation" != "yes" ]]; then
+	    echo -e "\nOperation cancelled."
+	    return
+	fi
+	echo -e "\nFlashing image to $device_path..."
+	# Flash the image to the selected device
+	sudo dd if="$image_path" of="$device_path" bs=16M status=progress conv=fsync && sudo sync
+	echo -e "\nImage successfully flashed to $device_path."
     done
-    read -n 1 -r -p "Select a device to flash the image (enter the number): " selection
-
-    if [[ "$selection" -lt 0 || "$selection" -gt "${#device_list[@]}" || "$selection" -gt 9 ]]; then
-	echo -e "\nInvalid selection"
-	return
-    fi
-    selected_device=$(echo "${device_list[$((selection-1))]}" | awk '{print $1}')
-    device_path="/dev/$selected_device"
-    echo -e "\nSelected device: $device_path"
-
-    # Ask for confirmation
-    read -n 3 -r -p "Are you sure you want to destroy all data on $device_path? (yes/no): " confirmation
-
-    if [[ "$confirmation" != "yes" ]]; then
-	echo -e "\nOperation cancelled."
-	return
-    fi
-    echo -e "\nFlashing image to $device_path..."
-    # Flash the image to the selected device
-    sudo dd if="$image_path" of="$device_path" bs=16M status=progress conv=fsync && sudo sync
-    echo -e "\nImage successfully flashed to $device_path."
 }
 
 askdoflash() {
