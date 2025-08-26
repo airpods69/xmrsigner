@@ -10,7 +10,6 @@ class Network(Enum):
     STAGE = NET_STAGE
 
     @classmethod
-    @property
     def list(cls) -> List['Network']:
         return [cls.MAIN, cls.TEST, cls.STAGE]
 
@@ -54,7 +53,7 @@ class Network(Enum):
                 return True
         except ValueError:
             return False
-        if net in cls.list:
+        if net in cls.list():
             return True
         return False
 

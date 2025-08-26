@@ -1,0 +1,4 @@
+monero@ git+https://github.com/DiosDelRayo/monero-python.git
+polyseed@ git+https://github.com/DiosDelRayo/polyseed-python.git
+pyzbar@ git+https://github.com/seedsigner/pyzbar.git@c3c237821c6a20b17953efe59b90df0b514a1c03
+urtypes@ git+https://github.com/jreesun/urtypes.git@e0d0db277ec2339650343eaf7b220fffb9233241

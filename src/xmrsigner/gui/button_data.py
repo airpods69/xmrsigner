@@ -68,7 +68,10 @@ class ButtonData:
             return data
         if type(data) == str:
             return cls.fromString(data)
-        return cls.fromTuple(data)
+        if isinstance(data, tuple):
+            return cls.fromTuple(data)
+        # For class attributes that are strings or tuples
+        return cls.fromString(data) if isinstance(data, str) else cls.fromTuple(data)
 
     def button_kwargs(
         self,
@@ -103,45 +106,14 @@ class ButtonData:
             out['is_checked'] = is_checked
         return out
 
-    @classmethod
-    @property
-    def DONE(cls) -> 'ButtonData':
-        return cls('Done')
-
-    @classmethod
-    @property
-    def NEXT(cls) -> 'ButtonData':
-        return cls('Next')
-
-    @classmethod
-    @property
-    def PREVIOUS(cls) -> 'ButtonData':
-        return cls('Previous')
-
-    @classmethod
-    @property
-    def OK(cls) -> 'ButtonData':
-        return cls('OK')
-
-    @classmethod
-    @property
-    def BACK(cls) -> 'ButtonData':
-        return cls('Back')
-
-    @classmethod
-    @property
-    def CONTINUE(cls) -> 'ButtonData':
-        return cls('Continue')
-
-    @classmethod
-    @property
-    def HOME(cls) -> 'ButtonData':
-        return cls('Home')
-
-    @classmethod
-    @property
-    def DISCARD(cls) -> 'ButtonData':
-        return cls('Discard').with_label_color(GUIConstants.RED)
+    DONE = 'Done'
+    NEXT = 'Next'
+    PREVIOUS = 'Previous'
+    OK = 'OK'
+    BACK = 'Back'
+    CONTINUE = 'Continue'
+    HOME = 'Home'
+    DISCARD = ('Discard', None, None, GUIConstants.RED)
 
 
 class FingerprintButtonData(ButtonData):

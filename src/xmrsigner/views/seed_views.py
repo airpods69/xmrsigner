@@ -218,7 +218,7 @@ class PolyseedMnemonicEntryView(SeedMnemonicEntryView):
 class SeedMnemonicInvalidView(View):
 
     EDIT = ButtonData('Review & Edit')
-    DISCARD = ButtonData.DISCARD
+    DISCARD = ButtonData.fromString(ButtonData.DISCARD) if isinstance(ButtonData.DISCARD, str) else ButtonData.fromTuple(ButtonData.DISCARD)
 
     def __init__(self, polyseed: bool = False):
         super().__init__()
@@ -258,7 +258,7 @@ class SeedFinalizeView(View):
     def run(self):
         networks = Network.get_list(self.settings.get_value(SettingsConstants.SETTING__NETWORKS))
         if len(networks) == 1 and self.seed.network != str(networks[0]):
-            self.seed.change_network(str(networks[0])) 
+            self.seed.change_network(str(networks[0]))
         if len(networks) > 1:
             ret = self.run_screen(
                 ButtonListScreen,
@@ -269,7 +269,7 @@ class SeedFinalizeView(View):
                 return Destination(BackStackView)
             network = networks[ret]
             if self.seed.network != str(network):
-                self.seed.change_network(str(network)) 
+                self.seed.change_network(str(network))
         if not self.polyseed:
             ret = self.run_screen(DateOrBlockHeightScreen)
             if ret == RET_CODE__BACK_BUTTON:
@@ -354,12 +354,12 @@ class SeedReviewPassphraseView(View):
         if button_data[selected_menu_num] == self.DONE:
             seed_num = self.controller.jar.finalize_pending_seed()
             return Destination(SeedOptionsView, view_args={"seed_num": seed_num}, clear_history=True)
-            
-            
+
+
 class SeedDiscardView(View):
 
     KEEP = ButtonData('Keep Seed')
-    DISCARD = ButtonData.DISCARD
+    DISCARD = ButtonData.fromString(ButtonData.DISCARD) if isinstance(ButtonData.DISCARD, str) else ButtonData.fromTuple(ButtonData.DISCARD)
 
     def __init__(self, seed_num: int = None):
         super().__init__()
@@ -415,7 +415,7 @@ class SeedOptionsView(View):
     PURGE_WALLET = ButtonData('Purge from Wallet').with_icon(FontAwesomeIconConstants.TRASH_CAN)
     BACKUP = ButtonData('Backup Seed').with_icon(FontAwesomeIconConstants.VAULT).with_right_icon(IconConstants.CHEVRON_RIGHT)
     CONVERT_POOLYSEED = ButtonData('To Monero seed').with_icon(IconConstants.CHEVRON_RIGHT)
-    DISCARD = ButtonData.DISCARD.with_icon(FontAwesomeIconConstants.TRASH_CAN).with_icon_color(GUIConstants.RED)
+    DISCARD = ButtonData.fromTuple(ButtonData.DISCARD).with_icon(FontAwesomeIconConstants.TRASH_CAN).with_icon_color(GUIConstants.RED)
 
     def __init__(self, seed_num: int):
         super().__init__()
@@ -427,7 +427,7 @@ class SeedOptionsView(View):
         if self.controller.transaction:
             if TxParser.has_matching_input_fingerprint(self.controller.transaction, self.seed, network=self.seed.network):
                 if self.controller.resume_main_flow and self.controller.resume_main_flow == Controller.FLOW__TX:
-                    # Re-route us directly back to the start of the Tx flow 
+                    # Re-route us directly back to the start of the Tx flow
                     self.controller.resume_main_flow = None
                     self.controller.transaction_seed = self.seed
                     return Destination(OverviewView, skip_current_view=True)
@@ -493,7 +493,7 @@ class SeedOptionsView(View):
 
 
 class SeedBackupView(View):
-    
+
     def __init__(self, seed_num):
         super().__init__()
         self.seed_num = seed_num
@@ -666,7 +666,7 @@ class SeedWordsBackupTestView(View):
 
 
 class SeedWordsBackupTestMistakeView(View):
-    
+
     def __init__(self, seed_num: int, cur_index: int, wrong_word: str, confirmed_list: List[bool] = None):
         super().__init__()
         self.seed_num = seed_num
@@ -696,7 +696,7 @@ class SeedWordsBackupTestSuccessView(View):
     def __init__(self, seed_num: int):
         super().__init__()
         self.seed_num = seed_num
-    
+
     def run(self):
         LargeIconStatusScreen(
             title='Backup Verified',
@@ -801,7 +801,7 @@ class SeedTranscribeSeedQRWarningView(View):
 
 
 class SeedTranscribeSeedQRWholeQRView(View):
-    
+
     def __init__(self, seed_num: int, seedqr_format: str, num_modules: int):
         super().__init__()
         self.seed_num = seed_num
@@ -833,7 +833,7 @@ class SeedTranscribeSeedQRZoomedInView(View):
         self.seed_num = seed_num
         self.seedqr_format = seedqr_format
         self.seed = self.controller.get_seed(seed_num)
-    
+
     def run(self):
         if self.seedqr_format == QRType.SEED__SEEDQR:
             num_modules = 29 if (len(self.mnemonic_list) * 4) > 77 else 25  # Version 1 can fit 77 numeric digits into 25x25 and up to 127 numeric digits into 29x29

@@ -91,12 +91,14 @@ class SettingsConstants:
 
     @classmethod
     def network_name(cls, network_constant: str) -> str:
-        if network == SettingsConstants.MAINNET:
+        if network_constant == SettingsConstants.MAINNET:
             return NET_MAIN
-        elif network == SettingsConstants.TESTNET:
+        elif network_constant == SettingsConstants.TESTNET:
             return NET_TEST
-        if network == SettingsConstants.STAGENET:
+        elif network_constant == SettingsConstants.STAGENET:
             return NET_STAGE
+        else:
+            raise ValueError("Invalid network constant")
 
     WORDLIST_LANGUAGE__ENGLISH = 'en'
     WORDLIST_LANGUAGE__CHINESE_SIMPLIFIED = 'zh_Hans_CN'
@@ -164,7 +166,6 @@ class SettingsConstants:
     ]
 
     @classmethod
-    @property
     def MONERO_LANGUAGE_NAMES(cls) -> List[Tuple[str, str]]:
         return [(lang, cls.ALL_WORDLIST_LANGUAGE_NAMES[lang]) for lang in cls.MONERO_SUPPORTED_LANGUAGES]
 
@@ -186,14 +187,13 @@ class SettingsConstants:
     ]
 
     @classmethod
-    @property
     def POLYSEED_LANGUAGE_NAMES(cls) -> List[Tuple[str, str]]:
         return [(lang, cls.ALL_WORDLIST_LANGUAGE_NAMES[lang]) for lang in cls.POLYSEED_SUPPORTED_LANGUAGES]
     
     # Individual SettingsEntry attr_names
     SETTING__LANGUAGE = "language"
     SETTING__MONERO_WORDLIST_LANGUAGE = "monero_wordlist_language"
-    SETTING__POLYSEED_WORDLIST_LANGUAGE = "monero_wordlist_language"
+    SETTING__POLYSEED_WORDLIST_LANGUAGE = "polyseed_wordlist_language"
     SETTING__PERSISTENT_SETTINGS = "persistent_settings"
     SETTING__XMR_DENOMINATION = "denomination"
 

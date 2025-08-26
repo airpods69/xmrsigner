@@ -40,13 +40,13 @@ class WalletViewKeyQRView(View):
             wallet_qr_format = self.settings.get_value(SettingsConstants.SETTING__VIEW_WALLET_QR_FORMAT)[ret]
         else:
             wallet_qr_format = self.settings.get_value(SettingsConstants.SETTING__VIEW_WALLET_QR_FORMAT)[0]
-        if wallet_qr_format == SettingsDefinition.VIEW_ONLY_WALLET_FORMAT_URI:
+        if wallet_qr_format == SettingsConstants.VIEW_ONLY_WALLET_FORMAT_URI:
             self.run_screen(
                 QRDisplayScreen,
                 qr_encoder=ViewOnlyWalletQrEncoder(self.wallet, self.height)
             )
             return Destination(BackStackView)
-        if wallet_qr_format == SettingsDefinition.VIEW_ONLY_WALLET_FORMAT_URI:
+        if wallet_qr_format == SettingsConstants.VIEW_ONLY_WALLET_FORMAT_JSON:
             self.run_screen(
                 QRDisplayScreen,
                 qr_encoder=ViewOnlyWalletJsonQrEncoder(self.wallet, self.height)
@@ -139,10 +139,14 @@ class ExportKeyImagesView(View):
         print('key images')
         try:
             key_image = WalletRpcWrapper(self.wallet).export_encrypted_key_images()
+            print(f"key_image result: {key_image}")
         except Exception as e:
             print(e)
-            raise e
-            self.run_screen(WarningScreen, title='Key Images Export', text='Error on exporting key images from the wallet', status_headline='Failed!', status_color='red')
+            self.run_screen(WarningScreen, title='Key Images Export', text='Error on exporting key images from the wallet. This feature may not be supported by your wallet version.', status_headline='Failed!', status_color='red')
+            return Destination(BackStackView)
+        
+        if key_image is None:
+            self.run_screen(WarningScreen, title='Key Images Export', text='No key images found. Wallet may be new or feature not supported.', status_headline='No Key Images', status_color='yellow')
             return Destination(BackStackView)
         try:
             self.run_screen(

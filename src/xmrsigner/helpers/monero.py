@@ -245,10 +245,31 @@ class WalletRpcWrapper:  # TODO: 2024-07-26, this should be in monero-python
                 params['export_raw'] = export_raw
             if get_tx_keys:
                 params['get_tx_keys'] = get_tx_keys
-            result = self.wallet._backend.raw_request('export_encrypted_key_images', params)
-            print(result)
-            if 'encrypted_key_images_blob' in result:
-                return EncryptedKeyImages(result['encrypted_key_images_blob'])
+            result = self.wallet._backend.raw_request('export_key_images', params)
+            print(f"export_key_images result: {result}")
+            # Check if the result contains key images
+            if 'key_images' in result:
+                if result['key_images']:
+                    # Convert the list of key images to a single string
+                    key_images_blob = ''.join([ki.get('key_image', '') for ki in result['key_images'] if ki.get('key_image')])
+                    if key_images_blob:
+                        print(f"Exported {len(result['key_images'])} key images")
+                        return EncryptedKeyImages(key_images_blob)
+                else:
+                    print("No key images to export (empty list)")
+                    return None
+            else:
+                print("No key images field in response")
+                return None
+        except ConnectionError as ce:
+            print(f'WalletRpcWrapper.export_encrypted_key_images(): {ce}')
+            raise ce
+        except RPCError as re:
+            print(f'WalletRpcWrapper.export_encrypted_key_images(): {re}')
+            raise re
+        except Exception as e:
+            print(f'WalletRpcWrapper.export_encrypted_key_images(): Unexpected error: {e}')
+            raise e
         except ConnectionError as ce:
             print(f'WalletRpcWrapper.export_encrypted_key_images(): {ce}')
             raise ce

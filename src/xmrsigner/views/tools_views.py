@@ -362,7 +362,7 @@ class ToolsCalcFinalWordDoneView(View):
         mnemonic_word_length = len(mnemonic)
         final_word = mnemonic[-1]
         LOAD = ButtonData('Load seed')
-        DISCARD = ButtonData.DISCARD
+        DISCARD = ButtonData.fromString(ButtonData.DISCARD) if isinstance(ButtonData.DISCARD, str) else ButtonData.fromTuple(ButtonData.DISCARD)
         button_data = [LOAD, DISCARD]
         selected_menu_num = ToolsCalcFinalWordDoneScreen(
             final_word=final_word,

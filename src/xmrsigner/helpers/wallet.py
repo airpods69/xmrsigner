@@ -144,7 +144,7 @@ class MoneroWalletRPCManager:
         return False
 
     def get_all_daemon_statuses(self) -> Dict[Network, bool]:
-        return {network: self.is_daemon_running(network) for network in Network.list}
+        return {network: self.is_daemon_running(network) for network in Network.list()}
 
     def get_daemon_resource_usage(self, network: Union[str, Network]):
         network = Network.ensure(network)
