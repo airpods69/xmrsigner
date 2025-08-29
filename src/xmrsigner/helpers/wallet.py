@@ -81,14 +81,21 @@ class MoneroWalletRPCManager:
             f'--log-file=/tmp/monero-wallet-rpc-{network}.log'
         ]
         if network != Network.MAIN:
-            out.append(f'--{network}')
+            # Convert network enum to correct command line flag
+            if network == Network.TEST:
+                out.append('--testnet')
+            elif network == Network.STAGE:
+                out.append('--stagenet')
+            else:
+                out.append(f'--{network}')
         return out
 
     def start_daemon(self, network: Union[str, Network]):
         network = Network.ensure(network)
+        print(f'starting daemon with network: {network}')
         if str(network) not in self.networks:
             raise ValueError(f"Invalid network: {network}")
-        
+
         if self.is_daemon_running(network):
             return True
 
@@ -137,7 +144,7 @@ class MoneroWalletRPCManager:
         network = Network.ensure(network)
         if str(network) not in self.networks:
             raise ValueError(f"Invalid network: {network}")
-        
+
         process = self.processes.get(network)
         if process:
             return process.poll() is None
@@ -150,7 +157,7 @@ class MoneroWalletRPCManager:
         network = Network.ensure(network)
         if not self.is_daemon_running(network):
             return None
-        
+
         process = Process(self.processes[network].pid)
         return {
             'cpu_percent': process.cpu_percent(interval=1),
@@ -259,6 +266,14 @@ class MoneroWalletRPCManager:
         network = Network.ensure(network)
         if type(public_address) != str:
             public_address = str(public_address)
+            
+        # Debug information
+        print(f"DEBUG load_wallet: Network: {network}")
+        print(f"DEBUG load_wallet: Wallet name: {wallet_name}")
+        print(f"DEBUG load_wallet: Public address: {public_address}")
+        print(f"DEBUG load_wallet: View key length: {len(view_key)}")
+        print(f"DEBUG load_wallet: Spend key length: {len(spend_key)}")
+        
         if self.wallet_exists(wallet_name) and self.open_wallet(wallet_name, network):
             return True
         # if wallet could not be opened let's purge the wallet file and/or wallet key file to avoid issues

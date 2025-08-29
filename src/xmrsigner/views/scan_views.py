@@ -130,8 +130,66 @@ class ScanOutputsView(ScanUR2View):  # TODO: 2024-07-23, implement
     pass
 
 
-class ScanUnsignedTransactionView(ScanUR2View):  # TODO: 2024-07-23, implement
-    pass
+class ScanUnsignedTransactionView(ScanUR2View):
+    """
+    Scans an unsigned transaction QR code and displays its details.
+    """
+    
+    def __init__(self):
+        super().__init__()
+        self.instructions_text = "Scan Unsigned Transaction QR"
+        self.invalid_qr_type_message = "Expected an unsigned transaction QR"
+        
+    @property
+    def is_valid_qr_type(self):
+        # Only accept unsigned transaction QR codes
+        return self.decoder.is_ur and self.decoder.qr_type == QRType.XMR_TX_UNSIGNED_UR
+        
+    def run(self):
+        from xmrsigner.gui.screens.scan_screens import ScanScreen
+        from xmrsigner.views.monero_views import OverviewView
+        
+        # Start the live preview and background QR reading
+        self.run_screen(
+            ScanScreen,
+            instructions_text=self.instructions_text,
+            decoder=self.decoder
+        )
+        
+        # Handle the results
+        if self.decoder.is_complete:
+            if not self.is_valid_qr_type:
+                # We recognized the QR type but it was not the type expected for the
+                # current flow.
+                return Destination(ErrorView, view_args=dict(
+                    title='Error',
+                    status_headline='Wrong QR Type',
+                    text=self.invalid_qr_type_message + f""", received "{self.decoder.qr_type.replace("__", ": ").replace("_", " ")}" format""",
+                    button_text='Back',
+                    next_destination=Destination(BackStackView, skip_current_view=True),
+                ))
+                
+            if self.decoder.qr_type == QRType.XMR_TX_UNSIGNED_UR:
+                # Get the transaction data
+                tx = self.decoder.get_tx()
+                self.controller.transaction = tx
+                
+                # Go to the transaction overview view
+                return Destination(OverviewView)
+                
+        if self.decoder.is_invalid:
+            # For now, don't even try to re-do the attempted operation, just reset and
+            # start everything over.
+            self.controller.resume_main_flow = None
+            return Destination(ErrorView, view_args=dict(
+                title='Error',
+                status_headline='Invalid Transaction',
+                text='The scanned QR code is invalid or corrupted.',
+                button_text='Done',
+                next_destination=Destination(MainMenuView, clear_history=True),
+            ))
+            
+        return Destination(MainMenuView)
 
 
 class ScanSeedQRView(ScanView):

@@ -6,8 +6,8 @@ from datetime import date, datetime, timedelta
 
 
 NET_MAIN = 'main'
-NET_TEST = 'test'
-NET_STAGE = 'stage'
+NET_TEST = 'testnet'
+NET_STAGE = 'stagenet'
 
 
 class TestMoneroTime(TestCase):

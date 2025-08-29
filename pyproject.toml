@@ -5,8 +5,11 @@ description = "Build an offline, airgapped Monero signing device for less than $
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "embit>=0.8.0",
+    "mock>=5.2.0",
     "monero @ git+https://github.com/DiosDelRayo/monero-python.git",
     "polyseed @ git+https://github.com/DiosDelRayo/polyseed-python.git",
+    "pytest>=8.4.1",
     "pyzbar @ git+https://github.com/seedsigner/pyzbar.git@c3c237821c6a20b17953efe59b90df0b514a1c03",
     "urtypes @ git+https://github.com/jreesun/urtypes.git@e0d0db277ec2339650343eaf7b220fffb9233241",
 ]

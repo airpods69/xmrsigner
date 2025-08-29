@@ -110,3 +110,6 @@ tests/test_controller.py
 tests/test_decodepsbtqr.py
 tests/test_seed.py
 tests/test_seedqr.py
+tests/test_transaction_flow.py
+tests/test_tx_parser_integration.py
+tests/test_txparser.py

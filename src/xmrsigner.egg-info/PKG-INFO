@@ -8,8 +8,11 @@ Author-email: author@example.com
 Requires-Python: >=3.6
 Description-Content-Type: text/markdown
 License-File: LICENSE.md
+Requires-Dist: embit>=0.8.0
+Requires-Dist: mock>=5.2.0
 Requires-Dist: monero@ git+https://github.com/DiosDelRayo/monero-python.git
 Requires-Dist: polyseed@ git+https://github.com/DiosDelRayo/polyseed-python.git
+Requires-Dist: pytest>=8.4.1
 Requires-Dist: pyzbar@ git+https://github.com/seedsigner/pyzbar.git@c3c237821c6a20b17953efe59b90df0b514a1c03
 Requires-Dist: urtypes@ git+https://github.com/jreesun/urtypes.git@e0d0db277ec2339650343eaf7b220fffb9233241
 Dynamic: author

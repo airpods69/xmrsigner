@@ -34,6 +34,7 @@ class Seed:
                  height: int = 0,
                  network: str = NET_MAIN):
         self.wordlist_language_code = wordlist_language_code
+        print(f"Seed: network is :{network}")
 
         if not mnemonic:
             raise Exception("Must initialize a Seed with a mnemonic List[str]")
@@ -70,7 +71,7 @@ class Seed:
 
     def change_network(self, network: str) -> None:
         self.network = network
-        self._generate_seed
+        self._generate_seed()
 
     @property
     def mnemonic_str(self) -> str:
@@ -83,7 +84,7 @@ class Seed:
     @property
     def mnemonic_display_str(self) -> str:
         return normalize("NFC", " ".join(self._mnemonic))
-    
+
     @property
     def mnemonic_display_list(self) -> List[str]:
         return normalize("NFC", " ".join(self._mnemonic)).split()

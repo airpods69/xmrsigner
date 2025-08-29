@@ -11,7 +11,7 @@ from xmrsigner.models.settings_definition import SettingsConstants, SettingsDefi
 from xmrsigner.gui.button_data import ButtonData
 from xmrsigner.gui.components import IconConstants, FontAwesomeIconConstants, GUIConstants
 from xmrsigner.gui.screens.wallet_screens import WalletOptionsScreen
-from xmrsigner.gui.screens.screen import RET_CODE__BACK_BUTTON, QRDisplayScreen
+from xmrsigner.gui.screens.screen import RET_CODE__BACK_BUTTON, QRDisplayScreen, EtaLoadingScreenThread
 
 from monero.wallet import Wallet as MoneroWallet
 from monero.seed import Seed as MoneroSeed
@@ -23,11 +23,19 @@ from typing import Union, Optional
 
 class WalletViewKeyQRView(View):
 
-    def __init__(self, seed_num: int):
+    def __init__(self, seed_num: int, network: Optional[Union[str, Network]] = None):
         super().__init__()
         self.seed_num: int = seed_num
-        self.wallet: MoneroWallet = self.controller.get_seed(seed_num).wallet
-        self.height: int = self.controller.get_seed(seed_num).height
+        self.seed = self.controller.get_seed(seed_num)
+
+        # Update the seed's network if a specific network is provided
+        if network is not None:
+            network = Network.ensure(network)
+            if self.seed.network != network.value:
+                self.seed.change_network(network.value)
+
+        self.wallet: MoneroWallet = self.seed.wallet
+        self.height: int = self.seed.height
 
     def run(self):
         wallet_qr_format: Optional[str] = None
@@ -144,7 +152,7 @@ class ExportKeyImagesView(View):
             print(e)
             self.run_screen(WarningScreen, title='Key Images Export', text='Error on exporting key images from the wallet. This feature may not be supported by your wallet version.', status_headline='Failed!', status_color='red')
             return Destination(BackStackView)
-        
+
         if key_image is None:
             self.run_screen(WarningScreen, title='Key Images Export', text='No key images found. Wallet may be new or feature not supported.', status_headline='No Key Images', status_color='yellow')
             return Destination(BackStackView)
@@ -242,7 +250,7 @@ class WalletOptionsView(View):
             from xmrsigner.views.scan_views import ScanUR2View
             return Destination(ScanUR2View)
         if button_data[selected_menu_num] == self.VIEW_ONLY_WALLET:
-            return Destination(WalletViewKeyQRView, view_args={'seed_num': self.controller.get_seed_num(self.seed)})
+            return Destination(WalletViewKeyQRView, view_args={'seed_num': self.controller.get_seed_num(self.seed), 'network': self.network})
         if button_data[selected_menu_num] == self.PURGE_WALLET:  # TODO: 2024-08-04, implement
             # return Destination(PurgeWalletView, view_args={'seed_num': self.seed_num})
             pass
@@ -258,8 +266,6 @@ class LoadWalletView(View):
         self.wallet_seed = self.controller.get_seed(seed_num)
 
         if self.controller.get_wallet(self.wallet_seed.network) is None or self.controller.get_wallet_seed(self.wallet_seed.network) != self.wallet_seed:
-            # Run the loading screen while we wait. Can take up to 4 minutes
-            from xmrsigner.gui.screens.screen import EtaLoadingScreenThread
             self.loading_screen = EtaLoadingScreenThread(text="Loading Wallet...", eta=180)
             self.loading_screen.start()
 
@@ -268,6 +274,7 @@ class LoadWalletView(View):
             return Destination(BackStackView)
         try:
             network = self.wallet_seed.network
+            print(f'LoadWalletView: starting daemon with network: {network}')
             self.controller.wallet_rpc_manager.start_daemon(network)
             print('Wait for rpc comming up...', end='', flush=True)
             while not self.controller.wallet_rpc_manager.is_rpc_running(network):
@@ -276,12 +283,39 @@ class LoadWalletView(View):
             print('Done')
             self.controller.wallet_rpc_manager.close_wallet(network)
             moneroSeed: MoneroSeed = self.wallet_seed.monero_seed
+            # Pass the correct network to generate the appropriate address
+            from monero.const import NET_MAIN, NET_TEST, NET_STAGE
+            print(f"DEBUG: network type: {type(network)}")
+            print(f"DEBUG: network value: {network}")
+            print(f"DEBUG: str(network): {str(network)}")
+            network_const = NET_MAIN
+            network_str = str(network)
+            if network_str == "testnet":
+                network_const = NET_TEST
+                print("DEBUG: Setting network_const to NET_TEST")
+            elif network_str == "stagenet" or network_str == "stage":
+                network_const = NET_STAGE
+                print("DEBUG: Setting network_const to NET_STAGE")
+            else:
+                print(f"DEBUG: No match, using default NET_MAIN, str(network) = '{network_str}'")
+                
+            public_address = moneroSeed.public_address(network_const)
+            view_key = moneroSeed.secret_view_key()
+            spend_key = moneroSeed.secret_spend_key()
+            
+            # Debug information
+            print(f"DEBUG: Network: {network}")
+            print(f"DEBUG: Network const: {network_const}")
+            print(f"DEBUG: Public address: {public_address}")
+            print(f"DEBUG: View key: {view_key[:10]}...")  # First 10 chars for privacy
+            print(f"DEBUG: Spend key: {spend_key[:10]}...")  # First 10 chars for privacy
+            
             self.controller.wallet_rpc_manager.load_wallet(
                 network,
                 self.wallet_seed.fingerprint,
-                moneroSeed.public_address(),
-                moneroSeed.secret_view_key(),
-                moneroSeed.secret_spend_key(),
+                public_address,
+                view_key,
+                spend_key,
                 self.wallet_seed.height,
                 self.wallet_seed.passphrase
                 )

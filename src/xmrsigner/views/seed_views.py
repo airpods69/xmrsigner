@@ -480,7 +480,7 @@ class SeedOptionsView(View):
         if button_data[selected_menu_num] == self.EXPORT_KEY_IMAGES:
             return Destination(ExportKeyImagesView, view_args={'network': self.seed.network, 'seed_num': self.seed_num})
         if button_data[selected_menu_num] == self.VIEW_ONLY_WALLET:
-            return Destination(WalletViewKeyQRView, view_args={'seed_num': self.seed_num})
+            return Destination(WalletViewKeyQRView, view_args={'seed_num': self.seed_num, 'network': self.seed.network})
         if button_data[selected_menu_num] == self.VIEW_ONLY_WALLET_JSON:
             return Destination(WalletViewKeyJsonQRView, view_args={'seed_num': self.seed_num})
         if button_data[selected_menu_num] == self.LOAD_WALLET:

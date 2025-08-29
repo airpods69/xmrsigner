@@ -1,12 +1,12 @@
 import os
 import pyzbar
 from embit import bip39
-from seedsigner.helpers.qr import QR
-from seedsigner.helpers.ur2.bytewords import decode
-from seedsigner.models.decode_qr import DecodeQR, DecodeQRStatus
-from seedsigner.models.encode_qr import EncodeQR
-from seedsigner.models.qr_type import QRType
-from seedsigner.models.settings import SettingsConstants
+from xmrsigner.helpers.qr import QR
+from xmrsigner.helpers.ur2.bytewords import decode
+from xmrsigner.models.decode_qr import DecodeQR, DecodeQRStatus
+from xmrsigner.models.encode_qr import EncodeQR
+from xmrsigner.models.qr_type import QRType
+from xmrsigner.models.settings_definition import SettingsConstants
 
 
 
