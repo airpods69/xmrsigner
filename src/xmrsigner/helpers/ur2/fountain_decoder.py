@@ -80,25 +80,32 @@ class FountainDecoder:
         return min(0.99, self.processed_parts_count / estimated_input_parts)
 
     def receive_part(self, encoder_part):
+        print(f"DEBUG: FountainDecoder receiving part - seq_num: {encoder_part.seq_num}, seq_len: {encoder_part.seq_len}")
+        
         # Don't process the part if we're already done
         if self.is_complete():
+            print("DEBUG: FountainDecoder already complete, skipping part")
             return False
 
         # Don't continue if this part doesn't validate
         if not self.validate_part(encoder_part):
+            print("DEBUG: FountainDecoder part validation failed")
             return False
 
         # Add this part to the queue
         p = FountainDecoder.Part.from_encoder_part(encoder_part)
+        print(f"DEBUG: Created FountainDecoder part with indexes: {p.indexes}")
         self.last_part_indexes = p.indexes
         self.enqueue(p)
 
         # Process the queue until we're done or the queue is empty
+        print(f"DEBUG: Processing queue - items: {len(self.queued_parts)}")
         while not self.is_complete() and len(self.queued_parts) != 0:
             self.process_queue_item()
 
         # Keep track of how many parts we've processed
         self.processed_parts_count += 1
+        print(f"DEBUG: Processed parts count: {self.processed_parts_count}")
 
         # self.print_part_end()
 
@@ -115,11 +122,14 @@ class FountainDecoder:
 
     def process_queue_item(self):
         part = self.queued_parts.pop(0)
+        print(f"DEBUG: Processing queue item - part indexes: {part.indexes}")
         # self.print_part(part)
 
         if part.is_simple():
+            print("DEBUG: Processing simple part")
             self.process_simple_part(part)
         else:
+            print("DEBUG: Processing mixed part")
             self.process_mixed_part(part)
         # self.print_state()
 
@@ -157,15 +167,20 @@ class FountainDecoder:
     def process_simple_part(self, p):
         # Don't process duplicate parts
         fragment_index = p.index()
+        print(f"DEBUG: Processing simple part - index: {fragment_index}")
+        
         if contains(self.received_part_indexes, fragment_index):
+            print("DEBUG: Skipping duplicate part")
             return
 
         # Record this part
         self.simple_parts[p.indexes] = p
         self.received_part_indexes.add(fragment_index)
+        print(f"DEBUG: Recorded part - received indexes: {self.received_part_indexes}")
 
         # If we've received all the parts
         if self.received_part_indexes == self.expected_part_indexes:
+            print("DEBUG: All parts received, reassembling message")
             # Reassemble the message from its fragments
             sorted_parts = []
             for value in self.simple_parts.values():
@@ -178,16 +193,22 @@ class FountainDecoder:
                 fragments.append(part.data)
 
             message = self.join_fragments(fragments, self.expected_message_len)
+            print(f"DEBUG: Reassembled message length: {len(message)}")
 
             # Verify the message checksum and note success or failure
             checksum = crc32_int(message)
+            print(f"DEBUG: Message checksum: {checksum}, expected: {self.expected_checksum}")
+            
             if(checksum == self.expected_checksum):
                 self.result = bytes(message)
+                print("DEBUG: Message checksum verified successfully")
             else:
                 self.result = InvalidChecksum()
+                print("DEBUG: Message checksum verification failed")
 
         else:
             # Reduce all the mixed parts by this part
+            print("DEBUG: Reducing mixed parts by simple part")
             self.reduce_mixed_by(p)
 
     def process_mixed_part(self, p):
@@ -215,8 +236,11 @@ class FountainDecoder:
             self.mixed_parts[p2.indexes] = p2
 
     def validate_part(self, p):
+        print(f"DEBUG: Validating part - seq_len: {p.seq_len}, message_len: {p.message_len}, checksum: {p.checksum}")
+        
         # If this is the first part we've seen
         if self.expected_part_indexes == None:
+            print("DEBUG: First part received, setting expectations")
             # Record the things that all the other parts we see will have to match to be valid.
             self.expected_part_indexes = set()
             for i in range(p.seq_len):
@@ -225,18 +249,24 @@ class FountainDecoder:
             self.expected_message_len = p.message_len
             self.expected_checksum = p.checksum
             self.expected_fragment_len = len(p.data)
+            print(f"DEBUG: Expectations set - parts: {self.expected_part_indexes}, message_len: {self.expected_message_len}, checksum: {self.expected_checksum}")
         else:
             # If this part's values don't match the first part's values, throw away the part
             if self.expected_part_count() != p.seq_len:
+                print(f"DEBUG: Sequence length mismatch - expected: {self.expected_part_count()}, got: {p.seq_len}")
                 return False
             if self.expected_message_len != p.message_len:
+                print(f"DEBUG: Message length mismatch - expected: {self.expected_message_len}, got: {p.message_len}")
                 return False
             if self.expected_checksum != p.checksum:
+                print(f"DEBUG: Checksum mismatch - expected: {self.expected_checksum}, got: {p.checksum}")
                 return False
             if self.expected_fragment_len != len(p.data):
+                print(f"DEBUG: Fragment length mismatch - expected: {self.expected_fragment_len}, got: {len(p.data)}")
                 return False
 
         # This part should be processed
+        print("DEBUG: Part validation successful")
         return True
 
     # debugging

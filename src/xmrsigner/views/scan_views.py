@@ -149,6 +149,8 @@ class ScanUnsignedTransactionView(ScanUR2View):
         from xmrsigner.gui.screens.scan_screens import ScanScreen
         from xmrsigner.views.monero_views import OverviewView
         
+        print("DEBUG: Starting ScanUnsignedTransactionView")
+        
         # Start the live preview and background QR reading
         self.run_screen(
             ScanScreen,
@@ -156,9 +158,14 @@ class ScanUnsignedTransactionView(ScanUR2View):
             decoder=self.decoder
         )
         
+        print(f"DEBUG: Scan completed - is_complete: {self.decoder.is_complete}, is_invalid: {self.decoder.is_invalid}")
+        print(f"DEBUG: QR type: {self.decoder.qr_type}")
+        
         # Handle the results
         if self.decoder.is_complete:
+            print("DEBUG: Decoder is complete")
             if not self.is_valid_qr_type:
+                print("DEBUG: Invalid QR type")
                 # We recognized the QR type but it was not the type expected for the
                 # current flow.
                 return Destination(ErrorView, view_args=dict(
@@ -170,14 +177,20 @@ class ScanUnsignedTransactionView(ScanUR2View):
                 ))
                 
             if self.decoder.qr_type == QRType.XMR_TX_UNSIGNED_UR:
+                print("DEBUG: Getting transaction data")
                 # Get the transaction data
                 tx = self.decoder.get_tx()
-                self.controller.transaction = tx
-                
-                # Go to the transaction overview view
-                return Destination(OverviewView)
+                if tx:
+                    print("DEBUG: Transaction data retrieved successfully")
+                    self.controller.transaction = tx
+                    
+                    # Go to the transaction overview view
+                    return Destination(OverviewView)
+                else:
+                    print("DEBUG: Failed to get transaction data")
                 
         if self.decoder.is_invalid:
+            print("DEBUG: Decoder is invalid")
             # For now, don't even try to re-do the attempted operation, just reset and
             # start everything over.
             self.controller.resume_main_flow = None
@@ -189,6 +202,7 @@ class ScanUnsignedTransactionView(ScanUR2View):
                 next_destination=Destination(MainMenuView, clear_history=True),
             ))
             
+        print("DEBUG: Returning to main menu")
         return Destination(MainMenuView)
 
 

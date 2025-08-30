@@ -9,6 +9,7 @@ from xmrsigner.hardware.buttons import HardwareButtonsConstants
 from xmrsigner.hardware.camera import Camera
 from xmrsigner.models.decode_qr import DecodeQR, DecodeQRStatus
 from xmrsigner.models.threads import BaseThread
+from xmrsigner.helpers.cake_wallet_qr_scanner import LiveQRScanner
 
 from xmrsigner.gui.screens.screen import BaseScreen, ButtonListScreen
 from xmrsigner.gui.components import GUIConstants, Fonts, TextArea
@@ -43,7 +44,7 @@ class ScanScreen(BaseScreen):
     decoder: DecodeQR = None
     instructions_text: str = None
     resolution: Tuple[int,int] = (480, 480)
-    framerate: int = 5
+    framerate: int = 10  # Increased framerate for better QR scanning experience
     render_rect: Tuple[int,int,int,int] = None
 
     def __post_init__(self):
@@ -53,9 +54,14 @@ class ScanScreen(BaseScreen):
         self.instructions_text = "< back  |  " + self.instructions_text
         self.camera = Camera.get_instance()
         self.camera.start_video_stream_mode(resolution=self.resolution, framerate=self.framerate, format="rgb")
+        
+        # Initialize the live QR scanner following Cake Wallet approach
+        self.live_qr_scanner = LiveQRScanner()
+        
         self.threads.append(ScanScreen.LivePreviewThread(
             camera=self.camera,
             decoder=self.decoder,
+            live_qr_scanner=self.live_qr_scanner,
             renderer=self.renderer,
             instructions_text=self.instructions_text,
             render_rect=self.render_rect,
@@ -64,9 +70,11 @@ class ScanScreen(BaseScreen):
 
     class LivePreviewThread(BaseThread):
 
-        def __init__(self, camera: Camera, decoder: DecodeQR, renderer: renderer.Renderer, instructions_text: str, render_rect: Tuple[int,int,int,int]):
+        def __init__(self, camera: Camera, decoder: DecodeQR, live_qr_scanner: LiveQRScanner, 
+                     renderer: renderer.Renderer, instructions_text: str, render_rect: Tuple[int,int,int,int]):
             self.camera = camera
             self.decoder = decoder
+            self.live_qr_scanner = live_qr_scanner
             self.renderer = renderer
             self.instructions_text = instructions_text
             if render_rect:
@@ -80,13 +88,36 @@ class ScanScreen(BaseScreen):
         def run(self):
             from timeit import default_timer as timer
             instructions_font = Fonts.get_font(GUIConstants.BODY_FONT_NAME, GUIConstants.BUTTON_FONT_SIZE)
+            print("DEBUG: LivePreviewThread started")
+            frame_count = 0
             while self.keep_running:
                 start = timer()
                 frame = self.camera.read_video_stream(as_image=True)
                 if frame is not None:
+                    frame_count += 1
+                    print(f"DEBUG: Frame {frame_count} captured - size: {frame.size}, mode: {frame.mode}")
+                    
+                    # Scan the frame with our Cake Wallet-style live QR scanner for progress tracking
+                    is_complete, progress, status = self.live_qr_scanner.scan_frame(frame)
+                    
+                    # Occasionally save a frame for debugging
+                    if frame_count % 30 == 0:  # Save every 30th frame
+                        try:
+                            frame.save(f"/tmp/debug_frame_{frame_count}.png")
+                            print(f"DEBUG: Saved debug frame {frame_count} to /tmp/debug_frame_{frame_count}.png")
+                        except Exception as e:
+                            print(f"DEBUG: Failed to save debug frame: {e}")
+                    
+                    # Determine what text to display based on scanning progress
                     scan_text = self.instructions_text
-                    if self.decoder and self.decoder.get_percent_complete() > 0 and self.decoder.is_ur:
-                        scan_text = str(self.decoder.get_percent_complete()) + "% Complete"
+                    if progress > 0 and progress < 1.0:
+                        scan_text = status  # Use the detailed status message from our scanner
+                        print(f"DEBUG: Scan progress: {scan_text}")
+                    elif is_complete:
+                        scan_text = "Complete!"
+                    elif status and status != "Processing...":
+                        scan_text = status
+                    
                     with self.renderer.lock:
                         if frame.width > self.render_width or frame.height > self.render_height:
                             frame = frame.resize(
@@ -116,7 +147,7 @@ class ScanScreen(BaseScreen):
                                      font=instructions_font,
                                      anchor="ms")
                         self.renderer.show_image(frame, show_direct=True)
-                sleep(0.05) # turn this up or down to tune performance while decoding UR
+                sleep(0.01) # Reduced sleep for faster QR scanning
                 if self.camera._video_stream is None:
                     break
 
@@ -127,13 +158,18 @@ class ScanScreen(BaseScreen):
         Screen. Once interaction starts, the display updates have to be managed in
         _run(). The live preview is an extra-complex case.
         """
+        print("DEBUG: Starting scan screen loop")
         while True:
             frame = self.camera.read_video_stream()
             if frame is not None:
+                print("DEBUG: Frame captured, processing...")
                 status = self.decoder.add_image(frame)
+                print(f"DEBUG: Decoder status: {status}")
                 if status in (DecodeQRStatus.COMPLETE, DecodeQRStatus.INVALID):
+                    print(f"DEBUG: Scan completed with status: {status}")
                     self.camera.stop_video_stream_mode()
                     break
                 if self.hw_inputs.check_for_low(HardwareButtonsConstants.KEY_RIGHT) or self.hw_inputs.check_for_low(HardwareButtonsConstants.KEY_LEFT):
+                    print("DEBUG: User cancelled scan")
                     self.camera.stop_video_stream_mode()
                     break

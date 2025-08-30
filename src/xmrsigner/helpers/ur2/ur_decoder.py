@@ -97,45 +97,71 @@ class URDecoder:
 
     def receive_part(self, str):
         try:
+            print(f"DEBUG: URDecoder receiving part: {str}")
+            
             # Don't process the part if we're already done
             if self.result != None:
+                print("DEBUG: URDecoder already has result, skipping part")
                 return False
 
             # Don't continue if this part doesn't validate
             (type, components) = URDecoder.parse(str)
+            print(f"DEBUG: Parsed UR - type: {type}, components: {components}")
+            
             if not self.validate_part(type):
+                print("DEBUG: UR part validation failed")
                 return False
 
             # If this is a single-part UR then we're done
             if len(components) == 1:
+                print("DEBUG: Single-part UR detected")
                 body = components[0]
                 self.result = self.decode_by_type(type, body)
+                print("DEBUG: Single-part UR decoded successfully")
                 return True
 
             # Multi-part URs must have two path components: seq/fragment
             if len(components) != 2:
+                print("DEBUG: Invalid path length for multi-part UR")
                 raise InvalidPathLength()
+                
             seq = components[0]
             fragment = components[1]
+            print(f"DEBUG: Multi-part UR - seq: {seq}, fragment: {fragment}")
 
             # Parse the sequence component and the fragment, and make sure they agree.
             (seq_num, seq_len) = URDecoder.parse_sequence_component(seq)
+            print(f"DEBUG: Parsed sequence - num: {seq_num}, len: {seq_len}")
+            
             cbor = Bytewords.decode(Bytewords_Style_minimal, fragment)
+            print(f"DEBUG: Decoded CBOR: {cbor}")
+            
             part = FountainEncoderPart.from_cbor(cbor)
+            print(f"DEBUG: Fountain part - seq_num: {part.seq_num}, seq_len: {part.seq_len}")
+            
             if seq_num != part.seq_num or seq_len != part.seq_len:
+                print("DEBUG: Sequence mismatch")
                 return False
 
             # Process the part
+            print("DEBUG: Processing part with fountain decoder")
             if not self.fountain_decoder.receive_part(part):
+                print("DEBUG: Fountain decoder failed to receive part")
                 return False
 
+            print(f"DEBUG: Fountain decoder success: {self.fountain_decoder.is_success()}")
+            print(f"DEBUG: Fountain decoder failure: {self.fountain_decoder.is_failure()}")
+            
             if self.fountain_decoder.is_success():
                 self.result = UR(type, self.fountain_decoder.result_message())
+                print("DEBUG: UR decoding successful")
             elif self.fountain_decoder.is_failure():
                 self.result = self.fountain_decoder.result_error()
+                print("DEBUG: UR decoding failed")
 
             return True
         except Exception as err:
+            print(f"DEBUG: Exception in receive_part: {err}")
             return False
 
     def expected_type(self):
